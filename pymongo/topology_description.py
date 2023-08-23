@@ -269,7 +269,10 @@ class TopologyDescription:
             return []
         # Round trip time in seconds.
         # Applied patch https://jira.mongodb.org/browse/PYTHON-1271?focusedCommentId=1559618&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-1559618
-        fastest = min(cast(float, s.round_trip_time) for s in selection.server_descriptions if s.round_trip_time is not None)
+        roundtrips = (cast(float, s.round_trip_time) for s in selection.server_descriptions if s.round_trip_time is not None)
+        if not roundtrips:
+            return []
+        fastest = min(roundtrips)
         threshold = self._topology_settings.local_threshold_ms / 1000.0
         return [
             s
